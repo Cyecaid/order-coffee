@@ -73,7 +73,6 @@
   </div>
 </form>
 
-
 <div class="modal-overlay" id="modal-overlay" style="display: none;"></div>
 <div class="modal" id="modal" style="display: none;">
   <button class="modal-close" id="modal-close">✖</button>
@@ -84,11 +83,22 @@
       <th>Напиток</th>
       <th>Молоко</th>
       <th>Дополнительно</th>
+      <th>Пожелания</th>
     </tr>
     </thead>
     <tbody></tbody>
   </table>
+
+  <div>
+    <label for="order-time">Выберите время заказа</label>
+    <input type="time" id="order-time" name="order-time" />
+  </div>
+
+  <div style="margin-top: 20px">
+    <button type="button" class="submit-button" id="confirm-order">Оформить</button>
+  </div>
 </div>
+
 <script src="index.js"></script>
 </body>
 </html>

@@ -137,3 +137,58 @@ function getDrinkWordForm(count) {
     if ([2, 3, 4].includes(rem10) && ![12, 13, 14].includes(rem100)) return 'напитка';
     return 'напитков';
 }
+
+submitButton.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const beverages = document.querySelectorAll('.beverage');
+    const count = beverages.length;
+    const wordForm = getDrinkWordForm(count);
+
+    const modalText = document.querySelector('#modal p');
+    modalText.textContent = `Вы заказали ${count} ${wordForm}`;
+
+    const tbody = document.querySelector('#order-summary tbody');
+    tbody.innerHTML = '';
+
+    beverages.forEach(bev => {
+        const drink = bev.querySelector('select').selectedOptions[0].textContent;
+
+        const milkRadio = bev.querySelector('input[type="radio"]:checked');
+        const milk = milkRadio ? milkRadio.nextElementSibling.textContent : '';
+
+        const additions = Array.from(bev.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent.trim())
+            .join(', ');
+
+        const specialRequest = bev.querySelector('.special-request').value; // Получаем текст из textarea
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${drink}</td>
+            <td>${milk}</td>
+            <td>${additions}</td>
+            <td>${specialRequest}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
+    document.getElementById('modal').style.display = 'block';
+    document.getElementById('modal-overlay').style.display = 'block';
+});
+
+document.getElementById('confirm-order').addEventListener('click', () => {
+    const orderTimeInput = document.getElementById('order-time');
+    const currentTime = new Date();
+    const selectedTime = new Date();
+    const [hours, minutes] = orderTimeInput.value.split(':');
+    selectedTime.setHours(hours, minutes);
+
+    if (selectedTime < currentTime) {
+        orderTimeInput.style.borderColor = 'red';
+        alert('Мы не умеем перемещаться во времени. Выберите время позже, чем текущее.');
+    } else {
+        document.getElementById('modal').style.display = 'none';
+        document.getElementById('modal-overlay').style.display = 'none';
+    }
+});
