@@ -2,6 +2,31 @@ const addButton = document.querySelector('.add-button');
 const beverageList = document.getElementById('beverage-list');
 const submitButton = document.querySelector('.submit-button');
 
+function formatUserText(text) {
+    const patterns = [
+        /срочно/gi,
+        /побыстрее/gi,
+        /быстрее/gi,
+        /скорее/gi,
+        /поскорее/gi,
+        /очень нужно/gi
+    ];
+
+    patterns.forEach(pattern => {
+        text = text.replace(pattern, match => `<b>${match}</b>`);
+    });
+
+    return text;
+}
+
+document.querySelectorAll('.special-request').forEach(textarea => {
+    textarea.addEventListener('input', (e) => {
+        const userText = e.target.value;
+        const output = e.target.nextElementSibling;
+        output.innerHTML = formatUserText(userText);
+    });
+});
+
 function updateRemoveButtons() {
     const beverages = document.querySelectorAll('.beverage');
     beverages.forEach((bev, index) => {
