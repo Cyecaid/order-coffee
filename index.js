@@ -4,7 +4,7 @@ const submitButton = document.querySelector('.submit-button');
 
 function updateRemoveButtons() {
     const beverages = document.querySelectorAll('.beverage');
-    beverages.forEach((bev, _) => {
+    beverages.forEach((bev, index) => {
         let btn = bev.querySelector('.remove-button');
         if (!btn) {
             btn = document.createElement('button');
@@ -52,7 +52,7 @@ addButton.addEventListener('click', () => {
     select.selectedIndex = 1;
 
     const milkRadios = newBeverage.querySelectorAll('input[type="radio"]');
-    milkRadios.forEach((radio, _) => {
+    milkRadios.forEach((radio, idx) => {
         radio.name = `milk${beverageCount}`;
     });
 
@@ -62,6 +62,36 @@ addButton.addEventListener('click', () => {
 
 submitButton.addEventListener('click', (e) => {
     e.preventDefault();
+
+    const beverages = document.querySelectorAll('.beverage');
+    const count = beverages.length;
+    const wordForm = getDrinkWordForm(count);
+
+    const modalText = document.querySelector('#modal p');
+    modalText.textContent = `Вы заказали ${count} ${wordForm}`;
+
+    const tbody = document.querySelector('#order-summary tbody');
+    tbody.innerHTML = ''; // Очищаем перед вставкой новых строк
+
+    beverages.forEach(bev => {
+        const drink = bev.querySelector('select').selectedOptions[0].textContent;
+
+        const milkRadio = bev.querySelector('input[type="radio"]:checked');
+        const milk = milkRadio ? milkRadio.nextElementSibling.textContent : '';
+
+        const additions = Array.from(bev.querySelectorAll('input[type="checkbox"]:checked'))
+            .map(cb => cb.nextElementSibling.textContent.trim())
+            .join(', ');
+
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${drink}</td>
+            <td>${milk}</td>
+            <td>${additions}</td>
+        `;
+        tbody.appendChild(row);
+    });
+
     document.getElementById('modal').style.display = 'block';
     document.getElementById('modal-overlay').style.display = 'block';
 });
@@ -71,4 +101,14 @@ document.getElementById('modal-close').addEventListener('click', () => {
     document.getElementById('modal-overlay').style.display = 'none';
 });
 
+
 updateRemoveButtons();
+
+function getDrinkWordForm(count) {
+    const rem10 = count % 10;
+    const rem100 = count % 100;
+
+    if (rem10 === 1 && rem100 !== 11) return 'напиток';
+    if ([2, 3, 4].includes(rem10) && ![12, 13, 14].includes(rem100)) return 'напитка';
+    return 'напитков';
+}
